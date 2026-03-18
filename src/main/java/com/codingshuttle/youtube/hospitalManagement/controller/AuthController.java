@@ -2,6 +2,7 @@ package com.codingshuttle.youtube.hospitalManagement.controller;
 
 import com.codingshuttle.youtube.hospitalManagement.dto.LoginRequestDto;
 import com.codingshuttle.youtube.hospitalManagement.dto.LoginResponceDto;
+import com.codingshuttle.youtube.hospitalManagement.dto.SinupResponceDto;
 import com.codingshuttle.youtube.hospitalManagement.security.AuthServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +23,11 @@ public class AuthController {
     public ResponseEntity<LoginResponceDto> login(@RequestBody LoginRequestDto loginRequestDto) {
 
         return ResponseEntity.ok(authServices.login(loginRequestDto));
+    }
+    // this is used for sinup create new user and save in database
+    @PostMapping("/sinup")
+     public ResponseEntity<SinupResponceDto> sinup(@RequestBody LoginRequestDto sinupRequestDto) {
+
+        return ResponseEntity.ok(authServices.sinup(sinupRequestDto));
     }
 }
