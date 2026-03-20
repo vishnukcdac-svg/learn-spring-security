@@ -8,12 +8,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private  final PasswordEncoder passwordEncoder;
+
+    private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -36,12 +39,15 @@ public class WebSecurityConfig {
                 csrf(csrfConfig -> csrfConfig.disable()) // csrf is disabled for stateless security
                         .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))// session is disabled for stateless security
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**","/auth/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/doctors/**").hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers("/public/**","/auth/**","/api/v1/auth/**").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/doctors/**").hasAnyRole("DOCTOR", "ADMIN")
+                                .anyRequest().authenticated()
 
                 )
                // .formLogin(Customizer.withDefaults())
+        // now adding jwt filter
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         ;
         return httpSecurity.build();
     }
